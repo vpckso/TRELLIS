@@ -1,3 +1,4 @@
+import sys
 import gradio as gr
 from gradio_litmodel3d import LitModel3D
 
@@ -17,6 +18,12 @@ from trellis.utils import render_utils, postprocessing_utils
 MAX_SEED = np.iinfo(np.int32).max
 TMP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp')
 os.makedirs(TMP_DIR, exist_ok=True)
+
+def restart_app():
+    """Attempts to restart the application."""
+    print("Restarting application...")
+    python = sys.executable
+    os.execv(python, [python, *sys.argv])  # Replace with your script path if needed
 
 
 def start_session(req: gr.Request):
@@ -256,7 +263,10 @@ with gr.Blocks(delete_cache=(600, 600)) as demo:
     * Upload an image and click "Generate" to create a 3D asset. If the image has alpha channel, it be used as the mask. Otherwise, we use `rembg` to remove the background.
     * If you find the generated 3D asset satisfactory, click "Extract GLB" to extract the GLB file and download it.
     """)
-    
+
+    restart_btn = gr.Button("Restart")
+    restart_btn.click(restart_app)
+
     with gr.Row():
         with gr.Column():
             with gr.Tabs() as input_tabs:
